@@ -5,6 +5,7 @@ import logging
 from typing import Dict, Any
 
 from fastapi import FastAPI, WebSocket, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import redis
 from confluent_kafka import Consumer, KafkaException
@@ -29,6 +30,15 @@ app.add_middleware(
 CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "exodia_config.json")
 METRICS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs", "metrics.json")
 AUDIT_LOG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs", "siem_audit.jsonl")
+HTML_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "desktop_app", "index.html")
+
+@app.get("/")
+def serve_dashboard():
+    try:
+        with open(HTML_PATH, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except Exception as e:
+        return HTMLResponse(content=f"<h1>Dashboard Not Found</h1><p>{e}</p>")
 
 def load_config() -> Dict[str, Any]:
     try:

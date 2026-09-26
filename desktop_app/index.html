@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Exodia - Geospatial Autonomous Defense | Griffin Command</title>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            deepVoid: '#08080a',
+            bioBg: '#0d0e12',
+            cardBg: '#13141a',
+            cardBorder: 'rgba(212, 175, 55, 0.12)',
+            cardBorderHover: 'rgba(212, 175, 55, 0.28)',
+            bronze: {
+              300: '#f3d994',
+              400: '#e5a93b',
+              500: '#d4af37',
+              600: '#c59b27',
+              700: '#b8860b',
+              800: '#7a581e',
+              900: '#3d2b0f'
+            },
+            antiqueGold: {
+              400: '#f6c358',
+              500: '#d4af37',
+              600: '#aa821d'
+            },
+            threatCoral: '#ff5722',
+            threatAmber: '#f59e0b'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          boxShadow: {
+            'bronze-glow': '0 0 25px -4px rgba(212, 175, 55, 0.35)',
+            'gold-beacon': '0 0 20px -2px rgba(245, 158, 11, 0.45)',
+            'hud-panel': '0 8px 32px 0 rgba(0, 0, 0, 0.7)'
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="bronze-gold-effects">
+    /* Subtle dot grid map matrix background with antique gold glow */
+    .point-cloud-grid {
+      background-image: radial-gradient(circle, rgba(212, 175, 55, 0.14) 1.2px, transparent 1.2px);
+      background-size: 16px 16px;
+    }
+    .tactical-dot-matrix {
+      background-image: radial-gradient(circle, rgba(212, 175, 55, 0.16) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+    /* Sleek bronze scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0d0e12;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a2012;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d4af37;
+    }
+    @keyframes pulse-halo {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.6); opacity: 0.15; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+    .animate-halo {
+      animation: pulse-halo 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes radar-sweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .sweep-line {
+      animation: radar-sweep 12s linear infinite;
+    }
+    .gilded-border {
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      box-shadow: inset 0 1px 0 rgba(243, 217, 148, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-deepVoid text-amber-100/80 font-sans min-h-screen flex flex-col antialiased selection:bg-bronze-500/30 selection:text-bronze-300">
+<!-- BEGIN: OS Chrome / Window Header -->
+<header class="h-14 bg-bioBg/95 border-b border-cardBorder px-4 py-2 flex items-center justify-between backdrop-blur-md sticky top-0 z-50">
+<!-- Left: Window Dots & Golden Griffin Brand Identity -->
+<div class="flex items-center space-x-4">
+<!-- Window Traffic Light dots in antique burnished tones -->
+<div class="flex items-center space-x-1.5">
+<span class="w-3 h-3 rounded-full bg-[#bf360c] inline-block shadow-sm"></span>
+<span class="w-3 h-3 rounded-full bg-[#c59b27] inline-block shadow-sm"></span>
+<span class="w-3 h-3 rounded-full bg-[#527928] inline-block shadow-sm"></span>
+</div>
+<!-- Brand & Golden Griffin Emblem -->
+<div class="flex items-center gap-2.5 pl-2">
+<!-- Stylized Golden Mythological Griffin Emblem -->
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-bronze-400 via-bronze-600 to-bronze-900 p-0.5 shadow-bronze-glow flex items-center justify-center shrink-0">
+<div class="w-full h-full bg-[#0d0e12] rounded-[7px] flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-bronze-500/20 to-transparent"></div>
+<svg class="w-5 h-5 text-bronze-400 filter drop-shadow-[0_1px_2px_rgba(212,175,55,0.7)]" fill="currentColor" viewbox="0 0 24 24">
+<!-- Mythological Griffin Silhouette: Curved beak, eagle wings, lion stance & raised tail -->
+<path d="M12 2C10.8 2 9.5 2.5 8.7 3.4C8.2 4 8 4.7 8 5.5C8 5.7 7.9 6 7.7 6.2C6.8 6.9 6.2 8 6 9.2C5.9 10 5.4 10.6 4.7 11C3.8 11.5 3 12.5 3 13.8C3 15.3 4.1 16.5 5.6 16.7C6.4 16.8 7 17.4 7.2 18.2C7.5 19.5 8.6 20.5 10 20.8C10.8 21 11.5 21.6 11.7 22.4C11.8 22.8 12.2 23 12.6 23C13 23 13.4 22.7 13.5 22.3C13.8 20.8 14.9 19.6 16.4 19.3C17.6 19.1 18.6 18.2 18.9 17C19.1 16.2 19.7 15.6 20.5 15.5C21.9 15.3 23 14 23 12.5C23 10.9 21.8 9.5 20.2 9.3C19.4 9.2 18.7 8.6 18.5 7.8C18.1 6.5 17 5.5 15.6 5.2C15.1 5.1 14.6 4.8 14.3 4.4C13.7 3.5 12.9 2 12 2ZM11.8 4.2C12.3 4.8 13.1 5.2 13.9 5.4C14.7 5.6 15.3 6.2 15.6 7C15.8 7.6 16.4 8 17.1 8.1C18.2 8.3 19 9.2 19 10.3C19 11.1 18.5 11.8 17.8 12.1C17.1 12.4 16.6 13.1 16.6 13.8C16.5 14.8 15.8 15.6 14.9 15.9C14.1 16.1 13.5 16.8 13.4 17.6C13.2 18.4 12.6 19.1 11.8 19.3C11.1 19.5 10.5 20.1 10.3 20.8C9.5 20.6 8.8 19.9 8.6 19C8.4 18.1 7.7 17.4 6.8 17.2C5.9 17 5.2 16.2 5.2 15.2C5.2 14.3 5.8 13.6 6.6 13.3C7.4 13 7.9 12.3 8 11.4C8.2 10.4 8.8 9.5 9.8 9.2C10.6 8.9 11.1 8.2 11.1 7.4C11.1 6.7 11.3 6 11.7 5.4C11.8 5 11.8 4.6 11.8 4.2Z"></path>
+<circle cx="10" cy="7.5" fill="#f3d994" r="1"></circle>
+</svg>
+</div>
+</div>
+<div class="flex items-center gap-1.5 font-bold tracking-wider text-sm font-mono uppercase">
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-bronze-300 via-bronze-400 to-amber-500 font-black">EXODIA</span>
+<span class="text-amber-800/80 font-normal">/</span>
+<span class="text-bronze-300 text-xs font-semibold tracking-widest">AUTONOMOUS DEFENSE</span>
+</div>
+<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-bronze-500/15 text-bronze-300 border border-bronze-500/35 font-medium flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-bronze-400 animate-pulse"></span>
+          GRIFFIN MESH v2.4
+        </span>
+</div>
+</div>
+<!-- Center: Ref Pill Breadcrumb Dropdowns in Bronze & Antique Brass Styling -->
+<div class="hidden xl:flex items-center space-x-2 text-xs font-mono text-amber-200/60">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cardBg border border-cardBorder hover:border-bronze-500/50 cursor-pointer transition">
+<span class="text-amber-500/60">Belongs to:</span>
+<span class="text-bronze-300 font-medium">War Room</span>
+<span class="text-[10px] text-amber-500/70">▾</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cardBg border border-cardBorder hover:border-bronze-500/50 cursor-pointer transition">
+<span class="text-amber-500/60">Location:</span>
+<span class="text-bronze-300 font-medium">Global Swarm</span>
+<span class="text-[10px] text-amber-500/70">▾</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cardBg border border-cardBorder hover:border-bronze-500/50 cursor-pointer transition">
+<span class="text-amber-500/60">Active days:</span>
+<span class="text-bronze-300 font-medium">360 day</span>
+<span class="text-[10px] text-amber-500/70">▾</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cardBg border border-cardBorder hover:border-bronze-500/50 cursor-pointer transition">
+<span class="text-amber-500/60">Links:</span>
+<span class="text-bronze-400 font-medium">Mesh 3D</span>
+<span class="text-[10px] text-amber-500/70">▾</span>
+</div>
+</div>
+<!-- Right: Search pill, view actions & controls -->
+<div class="flex items-center space-x-3">
+<!-- Search Input Pill as in reference with Bronze accents -->
+<div class="relative hidden md:block">
+<input class="h-8 pl-3 pr-8 rounded-full bg-cardBg border border-cardBorder text-xs text-amber-100 placeholder-amber-600/60 focus:outline-none focus:border-bronze-400 w-44 lg:w-56 transition font-mono shadow-inner" placeholder="Search by Node, IP..." type="text"/>
+<span class="material-symbols-outlined text-[15px] absolute right-2.5 top-2 text-bronze-500/70">search</span>
+</div>
+<!-- Action group pills (View, Policy manager, Playbooks) in gilded styling -->
+<div class="flex items-center bg-cardBg/90 border border-cardBorder rounded-full p-0.5 text-xs font-mono">
+<button class="px-3 py-1 rounded-full bg-gradient-to-r from-bronze-400 to-amber-500 text-deepVoid font-bold transition shadow-sm text-[11px]" onclick="pywebview.api.toggleSwarm()">Toggle Swarm</button>
+<button class="px-3 py-1 rounded-full text-amber-200/60 hover:text-bronze-300 transition text-[11px]" onclick="pywebview.api.armSensor()">Arm Sensor</button>
+<button class="px-3 py-1 rounded-full text-amber-200/60 hover:text-bronze-300 transition text-[11px]">Playbooks</button>
+</div>
+<!-- Settings Icon Button -->
+<button class="w-8 h-8 rounded-full bg-cardBg border border-cardBorder flex items-center justify-center text-amber-200/60 hover:text-bronze-300 hover:border-bronze-500/50 transition">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</button>
+</div>
+</header>
+<!-- END: OS Chrome / Window Header -->
+<!-- BEGIN: Main Dashboard Body -->
+<main class="flex-1 p-3 md:p-5 flex flex-col gap-4 max-w-[1720px] w-full mx-auto">
+<!-- Top Section: Left Telemetry Histogram + Center Particle Geospatial Hero + Right Radial Gauges -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+<!-- LEFT COLUMN: System Performance Title + Waveform Histograms (Col span 3) -->
+<div class="lg:col-span-3 bg-bioBg rounded-2xl border border-cardBorder p-4 flex flex-col justify-between shadow-hud-panel gilded-border">
+<div>
+<!-- Title & Back Nav -->
+<div class="flex items-start gap-3">
+<button class="w-7 h-7 rounded-full bg-cardBg border border-cardBorder flex items-center justify-center text-amber-200/60 hover:text-bronze-300 hover:border-bronze-500/40 mt-1 shrink-0 transition">
+<span class="material-symbols-outlined text-[15px]">arrow_back</span>
+</button>
+<div>
+<h1 class="text-xl md:text-2xl font-bold tracking-tight text-white leading-tight">System<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-bronze-300 via-bronze-400 to-amber-400">Performance</span></h1>
+<p class="text-[11px] font-mono text-amber-500/60 mt-1">Data based on realtime analysis</p>
+</div>
+</div>
+<!-- Section: Alerts Intensity in Blocks -->
+<div class="mt-6">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-mono text-amber-200/80 font-medium">Network Telemetry Rate</span>
+<span class="text-[10px] font-mono text-bronze-300 bg-bronze-500/10 px-1.5 py-0.5 rounded border border-bronze-500/30">LIVE</span>
+</div>
+<!-- Live Activity Log -->
+<div class="bg-cardBg/90 rounded-xl p-3 border border-cardBorder/80 h-32 overflow-y-auto" id="live-console">
+    <div class="text-[10px] font-mono text-amber-500/60">Waiting for telemetry...</div>
+</div>
+</div>
+<!-- Secondary Audio-style Density Histogram Chart -->
+<div class="mt-4 bg-cardBg/90 rounded-xl p-3 border border-cardBorder/80">
+<div class="h-14 flex items-end justify-around px-2 relative" id="live-histogram">
+<!-- Dynamic bars will go here -->
+</div>
+</div>
+</div>
+</div>
+<!-- CENTER HERO: High-Density Bronze & Antique Gold Point Cloud Map (Col span 7) -->
+<div class="lg:col-span-7 bg-bioBg rounded-2xl border border-cardBorder relative overflow-hidden flex flex-col justify-between min-h-[460px] shadow-hud-panel gilded-border">
+<!-- Warm Bronze & Amber Ambient Backdrop Glow -->
+<div class="absolute -top-24 left-1/4 w-96 h-96 bg-bronze-500/15 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/15 rounded-full blur-[110px] pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-bronze-700/10 rounded-full blur-[80px] pointer-events-none"></div>
+<!-- Point-Cloud World Map Graphic Layer (SVG Particle Mesh) -->
+<div class="absolute inset-0 point-cloud-grid opacity-75 pointer-events-none"></div>
+<div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+<!-- Styled Bronze/Gold Continental Point Cloud Representation -->
+<svg class="w-full h-full object-cover max-w-full opacity-95" fill="none" viewbox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<radialgradient cx="50%" cy="50%" id="meshGoldGradient" r="50%">
+<stop offset="0%" stop-color="#f3d994" stop-opacity="0.85"></stop>
+<stop offset="60%" stop-color="#d4af37" stop-opacity="0.6"></stop>
+<stop offset="100%" stop-color="#0d0e12" stop-opacity="0"></stop>
+</radialgradient>
+<lineargradient id="bronzeFlow" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#f3d994"></stop>
+<stop offset="50%" stop-color="#d4af37"></stop>
+<stop offset="100%" stop-color="#b8860b"></stop>
+</lineargradient>
+<filter height="140%" id="goldGlow" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="3"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+</defs>
+<!-- Grid Coordinates Background Overlay in antique gold -->
+<path d="M 50 0 L 50 480 M 200 0 L 200 480 M 350 0 L 350 480 M 500 0 L 500 480 M 650 0 L 650 480 M 800 0 L 800 480" stroke="rgba(212,175,55,0.06)" stroke-width="1"></path>
+<path d="M 0 100 L 900 100 M 0 240 L 900 240 M 0 380 L 900 380" stroke="rgba(212,175,55,0.06)" stroke-width="1"></path>
+<!-- High density organic particle clouds in warm gold/bronze -->
+<!-- North America Cloud -->
+<g fill="url(#bronzeFlow)" opacity="0.9">
+<ellipse cx="230" cy="170" fill="#d4af37" fill-opacity="0.22" filter="blur(30px)" rx="130" ry="75"></ellipse>
+<!-- Organic Dense Dot Array simulation in gold -->
+<circle cx="160" cy="130" r="1.5"></circle><circle cx="180" cy="120" r="2"></circle><circle cx="210" cy="115" r="2.5"></circle><circle cx="240" cy="130" r="1.8"></circle>
+<circle cx="170" cy="150" r="2.2"></circle><circle cx="200" cy="145" r="2.8"></circle><circle cx="225" cy="140" r="3.2"></circle><circle cx="260" cy="155" r="2"></circle>
+<circle cx="150" cy="170" r="2"></circle><circle cx="185" cy="175" r="2.5"></circle><circle cx="220" cy="170" filter="url(#goldGlow)" r="3.4"></circle><circle cx="250" cy="180" r="2.4"></circle><circle cx="280" cy="190" r="2"></circle>
+<circle cx="190" cy="205" r="2"></circle><circle cx="215" cy="210" r="2.6"></circle><circle cx="245" cy="215" r="2"></circle>
+<circle cx="220" cy="240" r="1.8"></circle><circle cx="235" cy="255" r="1.5"></circle><circle cx="245" cy="275" r="1.8"></circle>
+</g>
+<!-- South America Cloud -->
+<g fill="#e5a93b" opacity="0.85">
+<ellipse cx="290" cy="330" fill="#b8860b" fill-opacity="0.2" filter="blur(25px)" rx="60" ry="80"></ellipse>
+<circle cx="270" cy="290" r="2"></circle><circle cx="290" cy="300" r="2.5"></circle><circle cx="310" cy="315" r="2.2"></circle>
+<circle cx="280" cy="330" r="2.8"></circle><circle cx="305" cy="340" r="2.5"></circle><circle cx="325" cy="350" r="1.8"></circle>
+<circle cx="290" cy="370" r="2.4"></circle><circle cx="305" cy="390" r="2"></circle><circle cx="300" cy="410" r="1.5"></circle>
+</g>
+<!-- Europe & Africa Cloud -->
+<g fill="#d4af37" opacity="0.9">
+<ellipse cx="500" cy="180" fill="#d4af37" fill-opacity="0.25" filter="blur(30px)" rx="70" ry="50"></ellipse>
+<circle cx="470" cy="130" r="1.8"></circle><circle cx="490" cy="120" r="2.2"></circle><circle cx="510" cy="130" r="2.4"></circle><circle cx="535" cy="140" r="2"></circle>
+<circle cx="465" cy="155" r="2.5"></circle><circle cx="495" cy="150" filter="url(#goldGlow)" r="3.2"></circle><circle cx="520" cy="160" r="2.8"></circle><circle cx="545" cy="170" r="2.1"></circle>
+<!-- Africa -->
+<ellipse cx="515" cy="290" fill="#b8860b" fill-opacity="0.18" filter="blur(28px)" rx="65" ry="75"></ellipse>
+<circle cx="490" cy="210" r="2"></circle><circle cx="520" cy="215" r="2.6"></circle><circle cx="540" cy="230" r="2.2"></circle>
+<circle cx="500" cy="250" r="2.5"></circle><circle cx="530" cy="265" r="2.8"></circle><circle cx="550" cy="280" r="2"></circle>
+<circle cx="510" cy="300" r="2.2"></circle><circle cx="535" cy="320" r="2.6"></circle><circle cx="530" cy="350" r="2"></circle>
+</g>
+<!-- Asia & Pacific Cloud -->
+<g fill="#f3d994" opacity="0.9">
+<ellipse cx="690" cy="180" fill="#d4af37" fill-opacity="0.28" filter="blur(35px)" rx="140" ry="85"></ellipse>
+<circle cx="580" cy="140" r="2"></circle><circle cx="610" cy="130" r="2.2"></circle><circle cx="650" cy="120" r="2.8"></circle><circle cx="700" cy="125" r="3"></circle><circle cx="740" cy="140" r="2.2"></circle>
+<circle cx="600" cy="165" r="2.5"></circle><circle cx="635" cy="160" r="3.2"></circle><circle cx="670" cy="155" filter="url(#goldGlow)" r="3.5"></circle><circle cx="715" cy="165" r="3.2"></circle><circle cx="760" cy="175" r="2.4"></circle>
+<circle cx="620" cy="200" r="2.8"></circle><circle cx="660" cy="195" r="3.4"></circle><circle cx="700" cy="200" r="3"></circle><circle cx="740" cy="210" r="2.5"></circle>
+<circle cx="680" cy="235" r="2.4"></circle><circle cx="710" cy="245" r="2.8"></circle><circle cx="750" cy="250" r="2"></circle>
+<!-- Australia -->
+<ellipse cx="760" cy="340" fill="#b8860b" fill-opacity="0.22" filter="blur(25px)" rx="55" ry="40"></ellipse>
+<circle cx="730" cy="325" r="2"></circle><circle cx="760" cy="320" r="2.5"></circle><circle cx="785" cy="335" r="2.2"></circle>
+<circle cx="745" cy="355" r="2.3"></circle><circle cx="770" cy="360" r="2"></circle>
+</g>
+<!-- Dynamic Burnished Bronze / Gold Interconnection Arcs -->
+<path d="M 225 170 Q 360 80 500 150" stroke="rgba(212, 175, 55, 0.55)" stroke-dasharray="4 4" stroke-width="1.3"></path>
+<path d="M 520 160 Q 600 90 700 155" stroke="rgba(243, 217, 148, 0.65)" stroke-dasharray="3 3" stroke-width="1.3"></path>
+<path d="M 230 170 Q 450 300 700 200" stroke="rgba(229, 169, 59, 0.5)" stroke-dasharray="6 4" stroke-width="1.2"></path>
+<!-- Radar Sweep Sector Effect in Bronze -->
+<circle cx="450" cy="220" r="180" stroke="rgba(212, 175, 55, 0.15)" stroke-width="1"></circle>
+<circle cx="450" cy="220" r="100" stroke="rgba(212, 175, 55, 0.12)" stroke-width="1"></circle>
+</svg>
+</div>
+<!-- FLOATING MAP HUD ELEMENTS & THREAT PINS IN BRONZE / GOLD -->
+<!-- Pin: North America West - Griffin Shield Node (Antique Gold) -->
+<div class="absolute top-[34%] left-[17%] flex items-center justify-center group cursor-pointer z-20">
+<span class="w-6 h-6 rounded-full bg-bronze-500/25 flex items-center justify-center border border-bronze-400 shadow-bronze-glow">
+<span class="material-symbols-outlined text-[13px] text-bronze-300">shield</span>
+</span>
+</div>
+<!-- Pin: North America Mid - Amber Pulse Warning -->
+<div class="absolute top-[26%] left-[37%] flex items-center justify-center cursor-pointer z-20" id="map-alert-node">
+<span class="absolute w-7 h-7 rounded-full bg-threatAmber/30 animate-halo"></span>
+<span class="w-5 h-5 rounded-full bg-threatAmber flex items-center justify-center text-deepVoid font-bold text-[10px] shadow-gold-beacon">
+            !
+          </span>
+</div>
+
+<!-- Floating Bottom Floating HUD Controls Bar (Map Pill Controller) -->
+<div class="relative z-30 p-4 flex items-center justify-between" style="position: absolute; bottom: 0; width: 100%;">
+<!-- Coordinates & Scope Pill -->
+<div class="flex items-center space-x-1.5 bg-cardBg/90 backdrop-blur-md border border-bronze-500/30 rounded-full px-3 py-1.5 text-xs font-mono text-amber-200/70 shadow-hud-panel">
+<span class="w-2 h-2 rounded-full bg-bronze-400 animate-pulse shadow-bronze-glow"></span>
+<span class="text-white text-[11px] font-semibold">1</span>
+<span class="text-amber-800">|</span>
+<span class="material-symbols-outlined text-[13px] hover:text-bronze-300 cursor-pointer transition">radar</span>
+<span class="material-symbols-outlined text-[13px] hover:text-bronze-300 cursor-pointer transition">visibility</span>
+<span class="material-symbols-outlined text-[13px] hover:text-bronze-300 cursor-pointer transition">warning</span>
+<span class="text-[10px] text-bronze-300 pl-1 font-mono">360°</span>
+</div>
+<!-- Live status stream capsule in Bronze/Antique Gold -->
+<div class="hidden md:flex items-center space-x-2 bg-deepVoid/90 backdrop-blur border border-bronze-500/40 rounded-full px-3 py-1 text-[11px] font-mono text-bronze-300 shadow-bronze-glow">
+<span class="w-2 h-2 rounded-full bg-bronze-400 shadow-bronze-glow"></span>
+<span>AUTONOMOUS SWARM SWEEP: <strong class="text-white" id="swarm-status">ACTIVE</strong></span>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Radial Gauge Meters in Antique Gold & Bronze (Col span 2) -->
+<div class="lg:col-span-2 bg-bioBg rounded-2xl border border-cardBorder p-4 flex flex-col justify-between shadow-hud-panel gilded-border">
+<div class="space-y-6">
+<!-- Circular Gauge 1: Malicious Process -->
+<div class="flex flex-col items-center text-center">
+<div class="relative w-28 h-28 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#1f1810" stroke-width="7"></circle>
+<circle class="transition-all duration-700" cx="50" cy="50" fill="transparent" r="40" stroke="#ff5722" stroke-dasharray="251.2" stroke-dashoffset="180" stroke-linecap="round" stroke-width="7"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center font-mono">
+<span class="text-base font-bold text-white" id="avg-confidence">0%</span>
+<span class="text-[9px] text-amber-500/70 uppercase">Conf</span>
+</div>
+</div>
+<div class="mt-2 font-mono">
+<span class="text-[11px] text-amber-200/70 block">Malicious Load</span>
+<div class="flex items-baseline justify-center gap-1 mt-0.5">
+<span class="text-xl font-bold text-white tracking-tight" id="malicious-load-stat">0</span>
+<span class="text-xs text-threatCoral font-medium">/ 17%</span>
+</div>
+</div>
+</div>
+<!-- Circular Gauge 2: Attacked Assets (Warm Antique Gold) -->
+<div class="flex flex-col items-center text-center pt-2 border-t border-cardBorder">
+<div class="relative w-28 h-28 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#1f1810" stroke-width="7"></circle>
+<circle class="shadow-bronze-glow" cx="50" cy="50" fill="transparent" r="40" stroke="#d4af37" stroke-dasharray="251.2" stroke-dashoffset="210" stroke-linecap="round" stroke-width="7"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center font-mono">
+<span class="text-base font-bold text-bronze-300" id="impact-percent">0%</span>
+<span class="text-[9px] text-amber-500/70 uppercase">Impact</span>
+</div>
+</div>
+<div class="mt-2 font-mono">
+<span class="text-[11px] text-amber-200/70 block">Attacked Assets</span>
+<div class="flex items-baseline justify-center gap-1 mt-0.5">
+<span class="text-xl font-bold text-white tracking-tight" id="attacked-assets-stat">0</span>
+<span class="text-xs text-bronze-400 font-medium">/ 8%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Incident Pill Controls as in Reference (+ / Alerts x) -->
+<div class="pt-3 border-t border-cardBorder flex items-center justify-between text-xs font-mono">
+<button class="w-7 h-7 rounded-full bg-cardBg border border-cardBorder flex items-center justify-center text-amber-200/70 hover:text-bronze-300 hover:border-bronze-500/40 transition">
+            +
+          </button>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cardBg border border-cardBorder text-[11px] text-amber-200/80 hover:border-bronze-500/50 cursor-pointer transition">
+<span>Alerts</span>
+<span class="text-amber-500 hover:text-white">✕</span>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM HORIZON GRID: "360 View by Blocks" & Comprehensive Telemetry Cards -->
+<div class="bg-bioBg rounded-2xl border border-cardBorder p-4 shadow-hud-panel gilded-border">
+<!-- Header Bar for Bottom Section -->
+<div class="flex items-center justify-between pb-3 border-b border-cardBorder mb-4">
+<div class="flex items-center gap-4">
+<h2 class="text-sm font-mono font-bold text-white tracking-wide uppercase flex items-center gap-2">
+<span>360 View by Blocks</span>
+<span class="text-amber-800 font-normal">|</span>
+<span class="text-xs font-normal text-amber-500/80 lowercase">Tactical coordinate matrix</span>
+</h2>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+<!-- LEFT: Tactical Coordinate Grid Matrix with Shields & Markers (5 cols) -->
+<div class="lg:col-span-5 bg-cardBg/80 rounded-xl border border-cardBorder p-4 flex gap-4 items-center">
+<!-- Tactical row labels (Attack, Delete, Failure, Lockout) -->
+<div class="flex flex-col justify-between py-2 text-[10px] font-mono text-amber-600/70 space-y-4 shrink-0 font-medium">
+<span>Attack</span>
+<span>Delete</span>
+<span>Failure</span>
+<span>Lockout</span>
+</div>
+<!-- Dot Matrix Interactive Field (Bronze/Gold styled) -->
+<div class="flex-1 tactical-dot-matrix rounded-lg border border-bronze-500/10 p-3 min-h-[140px] relative flex items-center justify-center">
+<!-- Target Center HUD Floating Module in Obsidian and Burnished Gold -->
+<div class="bg-deepVoid/95 border border-bronze-500/40 rounded-xl px-3 py-1.5 shadow-bronze-glow flex flex-col items-center gap-1 z-20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[13px] text-amber-400/80">crop_free</span>
+<span class="w-5 h-5 rounded-full bg-gradient-to-r from-bronze-300 to-amber-400 text-deepVoid font-black flex items-center justify-center text-[10px]">✦</span>
+<span class="material-symbols-outlined text-[13px] text-amber-400/80">sync</span>
+</div>
+<div class="flex items-center gap-1 text-[9px] font-mono text-threatCoral bg-threatCoral/10 px-2 py-0.5 rounded border border-threatCoral/30">
+<span>▲</span>
+<span id="latest-alert-text">Active Monitoring</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT: 4 Telemetry Status Cards (Protected, Danger, Alerts, Unknown) (7 cols) -->
+<div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
+<!-- Card 1: Protected (Gilded Gold) -->
+<div class="bg-cardBg/90 rounded-xl border border-cardBorder p-3 flex flex-col justify-between hover:border-bronze-500/50 transition">
+<div class="flex items-center gap-1.5 text-xs font-mono font-medium text-amber-100">
+<span class="w-3 h-3 rounded-full bg-bronze-500/25 border border-bronze-400 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-bronze-300"></span>
+</span>
+<span>Protected</span>
+</div>
+<div class="mt-4 font-mono">
+<div class="text-[10px] text-amber-600/80 mb-0.5">Safeguarded</div>
+<div class="text-xl font-bold text-white tracking-tight" id="stat-protected">0 <span class="text-xs text-amber-600/70 font-normal">/ max</span></div>
+</div>
+</div>
+<!-- Card 2: Danger (Warm Crimson / Coral) -->
+<div class="bg-cardBg/90 rounded-xl border border-cardBorder p-3 flex flex-col justify-between hover:border-threatCoral/40 transition">
+<div class="flex items-center gap-1.5 text-xs font-mono font-medium text-amber-100">
+<span class="w-3 h-3 rounded-full bg-threatCoral/25 border border-threatCoral flex items-center justify-center text-threatCoral text-[9px]">
+                ▲
+              </span>
+<span>Danger</span>
+</div>
+<div class="mt-4 font-mono">
+<div class="text-[10px] text-amber-600/80 mb-0.5">Active Threats</div>
+<div class="text-xl font-bold text-threatCoral tracking-tight" id="stat-danger">0 <span class="text-xs text-amber-600/70 font-normal">/ max</span></div>
+</div>
+</div>
+<!-- Card 3: Alerts (Warm Amber) -->
+<div class="bg-cardBg/90 rounded-xl border border-cardBorder p-3 flex flex-col justify-between hover:border-threatAmber/40 transition">
+<div class="flex items-center gap-1.5 text-xs font-mono font-medium text-amber-100">
+<span class="w-3 h-3 rounded-full bg-threatAmber flex items-center justify-center text-deepVoid font-bold text-[8px]">
+                !
+              </span>
+<span>Alerts</span>
+</div>
+<div class="mt-4 font-mono">
+<div class="text-[10px] text-amber-600/80 mb-0.5">Ingested</div>
+<div class="text-xl font-bold text-threatAmber tracking-tight" id="stat-alerts">0 <span class="text-xs text-amber-600/70 font-normal">/ max</span></div>
+</div>
+</div>
+<!-- Card 4: Unknown (Smoked Obsidian) -->
+<div class="bg-cardBg/90 rounded-xl border border-cardBorder p-3 flex flex-col justify-between hover:border-amber-700/40 transition">
+<div class="flex items-center gap-1.5 text-xs font-mono font-medium text-amber-100">
+<span class="w-3 h-3 rounded-full bg-amber-900/40 border border-amber-800/60 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+</span>
+<span>Unknown</span>
+</div>
+<div class="mt-4 font-mono">
+<div class="text-[10px] text-amber-600/80 mb-0.5">Anomalies</div>
+<div class="text-xl font-bold text-amber-200/90 tracking-tight" id="stat-unknown">0 <span class="text-xs text-amber-600/70 font-normal">/ max</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- END: Main Dashboard Body -->
+
+<script>
+    // App Logic and Data Fetching
+    
+    // Fetch metrics from API Gateway
+    async function fetchMetrics() {
+        try {
+            const response = await fetch('/api/v1/metrics');
+            const data = await response.json();
+            
+            // Update UI based on data
+            const threatsProcessed = data.threats_processed || 0;
+            const aiConfidence = data.ai_confidence_score || 0;
+            
+            document.getElementById('stat-alerts').innerHTML = `${threatsProcessed} <span class="text-xs text-amber-600/70 font-normal">/ max</span>`;
+            document.getElementById('avg-confidence').innerText = `${(aiConfidence * 100).toFixed(0)}%`;
+            document.getElementById('stat-protected').innerHTML = `${Math.floor(threatsProcessed * 0.9)} <span class="text-xs text-amber-600/70 font-normal">/ max</span>`;
+            document.getElementById('stat-danger').innerHTML = `${Math.floor(threatsProcessed * 0.1)} <span class="text-xs text-amber-600/70 font-normal">/ max</span>`;
+            document.getElementById('attacked-assets-stat').innerText = `${threatsProcessed}`;
+            document.getElementById('malicious-load-stat').innerText = `${Math.floor(threatsProcessed * 0.15)}`;
+            
+        } catch (error) {
+            console.error('Error fetching metrics:', error);
+        }
+    }
+
+    // Connect to WebSocket stream
+    function connectWebSocket() {
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        // Connect directly to the FastAPI server running on the same host
+        const wsUrl = `${wsProtocol}//${window.location.host}/api/v1/stream`;
+        const ws = new WebSocket(wsUrl);
+        const liveConsole = document.getElementById('live-console');
+        
+        ws.onopen = () => {
+            console.log('Connected to stream');
+            liveConsole.innerHTML = '<div class="text-[10px] font-mono text-bronze-300">>> Stream Connected.</div>';
+        };
+        
+        ws.onmessage = (event) => {
+            const data = event.data;
+            let logMsg = data;
+            
+            try {
+                // If it's JSON, format it nicely
+                const parsed = JSON.parse(data);
+                logMsg = `[${new Date().toLocaleTimeString()}] THREAT: ${parsed.threat_type || 'Unknown'} IP: ${parsed.source_ip || parsed.ip} -> ACTION: ${parsed.action || 'Logged'}`;
+                
+                // Update latest alert module
+                document.getElementById('latest-alert-text').innerText = `${parsed.threat_type || 'Anomaly'} detected`;
+                
+                // Randomly bounce the alert dot on the map
+                const mapAlert = document.getElementById('map-alert-node');
+                if (mapAlert) {
+                    mapAlert.style.top = Math.floor(Math.random() * 60 + 20) + '%';
+                    mapAlert.style.left = Math.floor(Math.random() * 60 + 20) + '%';
+                }
+            } catch (e) {
+                // Not JSON, just display text
+            }
+            
+            const newDiv = document.createElement('div');
+            newDiv.className = 'text-[10px] font-mono text-amber-100/90 mb-1';
+            newDiv.innerText = logMsg;
+            liveConsole.appendChild(newDiv);
+            
+            // Auto scroll
+            liveConsole.scrollTop = liveConsole.scrollHeight;
+            
+            // Limit to 50 lines
+            if (liveConsole.childElementCount > 50) {
+                liveConsole.removeChild(liveConsole.firstChild);
+            }
+        };
+        
+        ws.onclose = () => {
+            console.log('Stream disconnected, retrying in 3s');
+            setTimeout(connectWebSocket, 3000);
+        };
+    }
+
+    // Initialize
+    setInterval(fetchMetrics, 2000);
+    fetchMetrics();
+    connectWebSocket();
+</script>
+</body></html>
