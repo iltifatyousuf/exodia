@@ -1,0 +1,16 @@
+{
+    "name": "postgres-threat-intel-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "tasks.max": "1",
+        "database.hostname": "postgres",
+        "database.port": "5432",
+        "database.user": "exodia",
+        "database.password": "exodia_secure_password",
+        "database.dbname" : "threat_intel_db",
+        "database.server.name": "exodia-prod-db",
+        "table.include.list": "public.malicious_ips,public.asset_inventory",
+        "plugin.name": "pgoutput",
+        "topic.prefix": "cdc-stream"
+    }
+}

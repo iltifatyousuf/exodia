@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-iam
+  namespace: exodia-security
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:23.0.0
+          args: ["start-dev"]
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: "admin"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: "exodia_secure_admin"
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-service
+  namespace: exodia-security
+spec:
+  type: ClusterIP
+  selector:
+    app: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+# Keycloak Realm Configuration for Exodia Dashboard SSO
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: KeycloakRealmImport
+metadata:
+  name: exodia-realm
+  namespace: exodia-security
+spec:
+  keycloakCRName: keycloak-iam
+  realm:
+    id: exodia-cyber
+    realm: exodia-cyber
+    enabled: true
+    clients:
+      - clientId: exodia-dashboard-nextjs
+        enabled: true
+        publicClient: true
+        redirectUris:
+          - "https://exodia.enterprise.local/api/auth/callback/keycloak"
+        webOrigins:
+          - "+"
+    users:
+      - username: soc-analyst-1
+        enabled: true
+        credentials:
+          - type: password
+            value: "soc_analyst_secure"
+        realmRoles:
+          - "human-reviewer"

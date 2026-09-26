@@ -1,0 +1,27 @@
+{
+  "gateway_url": "http://localhost:8080",
+  "kafka_broker": "localhost:9092",
+  "kafka_topic": "enriched-alerts",
+  "neo4j_uri": "bolt://localhost:7687",
+  "neo4j_user": "neo4j",
+  "neo4j_password": "exodia_admin",
+  "redis_host": "localhost",
+  "redis_port": 6379,
+  "ollama_url": "http://localhost:11434",
+  "llm_model": "llama3.2",
+  "llm_temperature": 0,
+  "splunk_hec_url": "",
+  "splunk_hec_token": "",
+  "elastic_url": "",
+  "cloudflare_api_key": "",
+  "cloudflare_zone_id": "",
+  "paloalto_api_url": "",
+  "pinecone_api_key": "",
+  "demo_mode": true,
+  "playbooks": {
+    "waf_ip_ban": true,
+    "edr_host_isolation": true,
+    "slack_approval_webhook": true,
+    "iam_policy_revocation": false
+  }
+}
