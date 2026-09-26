@@ -17,23 +17,18 @@ from neo4j import GraphDatabase
 
 # Configure modern dark theme
 ctk.set_appearance_mode("Dark")
-ctk.set_default_color_theme("green")
 
 def get_project_root():
     if getattr(sys, 'frozen', False):
-        # When frozen, exe is in dist/ — project root is one level up
         exe_dir = os.path.dirname(sys.executable)
         parent = os.path.dirname(exe_dir)
-        # Check if parent has ai_engine (meaning we're in dist/)
         if os.path.isdir(os.path.join(parent, 'ai_engine')):
             return parent
-        # Check if cwd has ai_engine (shortcut sets WorkingDirectory)
         if os.path.isdir(os.path.join(os.getcwd(), 'ai_engine')):
             return os.getcwd()
-        # Check exe_dir itself
         if os.path.isdir(os.path.join(exe_dir, 'ai_engine')):
             return exe_dir
-        return parent  # best guess
+        return parent
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def get_asset_path(filename):
@@ -62,7 +57,7 @@ class ExodiaDesktop(ctk.CTk):
         self.load_config()
 
         # ─── SIDEBAR ───
-        self.sidebar = ctk.CTkFrame(self, width=260, corner_radius=0, fg_color="#111111")
+        self.sidebar = ctk.CTkFrame(self, width=260, corner_radius=0, fg_color="#141414", border_color="#C88E54", border_width=1)
         self.sidebar.grid(row=0, column=0, sticky="nsew")
         self.sidebar.grid_rowconfigure(7, weight=1)
 
@@ -72,22 +67,24 @@ class ExodiaDesktop(ctk.CTk):
             self.logo_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(200, 150))
             self.logo = ctk.CTkLabel(self.sidebar, text="", image=self.logo_img)
         except Exception:
-            self.logo = ctk.CTkLabel(self.sidebar, text="EXODIA", font=ctk.CTkFont(size=24, weight="bold"))
+            self.logo = ctk.CTkLabel(self.sidebar, text="EXODIA", text_color="#E8B87D", font=ctk.CTkFont(size=24, weight="bold"))
         self.logo.grid(row=0, column=0, padx=20, pady=(40, 40))
 
-        self.btn_dash = ctk.CTkButton(self.sidebar, text="Dashboard", fg_color="#222222", hover_color="#333333", anchor="w", command=lambda: self.select_tab("dashboard"))
+        btn_kwargs = {"fg_color": "#1E1E1E", "border_color": "#D4AF37", "border_width": 1, "text_color": "#FAD990", "hover_color": "#332A1B", "anchor": "w"}
+        
+        self.btn_dash = ctk.CTkButton(self.sidebar, text="Dashboard", command=lambda: self.select_tab("dashboard"), **btn_kwargs)
         self.btn_dash.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
         
-        self.btn_agents = ctk.CTkButton(self.sidebar, text="AI Swarm Control", fg_color="transparent", hover_color="#333333", anchor="w", command=lambda: self.select_tab("agents"))
+        self.btn_agents = ctk.CTkButton(self.sidebar, text="AI Swarm Control", command=lambda: self.select_tab("agents"), **btn_kwargs)
         self.btn_agents.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
         
-        self.btn_graph = ctk.CTkButton(self.sidebar, text="Threat Graph", fg_color="transparent", hover_color="#333333", anchor="w", command=lambda: self.select_tab("graph"))
+        self.btn_graph = ctk.CTkButton(self.sidebar, text="Threat Graph", command=lambda: self.select_tab("graph"), **btn_kwargs)
         self.btn_graph.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
         
-        self.btn_playbooks = ctk.CTkButton(self.sidebar, text="SOAR Playbooks", fg_color="transparent", hover_color="#333333", anchor="w", command=lambda: self.select_tab("playbooks"))
+        self.btn_playbooks = ctk.CTkButton(self.sidebar, text="SOAR Playbooks", command=lambda: self.select_tab("playbooks"), **btn_kwargs)
         self.btn_playbooks.grid(row=4, column=0, padx=20, pady=10, sticky="ew")
 
-        self.btn_settings = ctk.CTkButton(self.sidebar, text="Settings", fg_color="transparent", hover_color="#333333", anchor="w", command=lambda: self.select_tab("settings"))
+        self.btn_settings = ctk.CTkButton(self.sidebar, text="Settings", command=lambda: self.select_tab("settings"), **btn_kwargs)
         self.btn_settings.grid(row=5, column=0, padx=20, pady=10, sticky="ew")
 
         # Service Status Indicators
@@ -103,11 +100,11 @@ class ExodiaDesktop(ctk.CTk):
         self.status_redis = ctk.CTkLabel(self.status_frame, text="● Redis Offline", text_color="#FF4444", font=ctk.CTkFont(size=12, weight="bold"))
         self.status_redis.pack(anchor="w")
 
-        self.version_label = ctk.CTkLabel(self.sidebar, text="Exodia v2.0", text_color="#555555", font=ctk.CTkFont(size=10))
+        self.version_label = ctk.CTkLabel(self.sidebar, text="Exodia v2.0", text_color="#888888", font=ctk.CTkFont(size=10))
         self.version_label.grid(row=9, column=0, pady=(0, 10), sticky="s")
 
         # ─── MAIN CONTENT ───
-        self.main_container = ctk.CTkFrame(self, fg_color="#181818", corner_radius=0)
+        self.main_container = ctk.CTkFrame(self, fg_color="#0A0A0A", corner_radius=0)
         self.main_container.grid(row=0, column=1, sticky="nsew")
         self.main_container.grid_rowconfigure(0, weight=1)
         self.main_container.grid_columnconfigure(0, weight=1)
@@ -131,7 +128,6 @@ class ExodiaDesktop(ctk.CTk):
 
     def get_python_exe(self):
         if getattr(sys, 'frozen', False):
-            # When frozen, find the venv python relative to project root
             candidates = [
                 os.path.join(get_project_root(), 'venv', 'Scripts', 'python.exe'),
                 os.path.join(os.path.dirname(sys.executable), 'venv', 'Scripts', 'python.exe'),
@@ -141,7 +137,7 @@ class ExodiaDesktop(ctk.CTk):
             for c in candidates:
                 if os.path.exists(c):
                     return c
-            return 'python'  # fallback to system python
+            return 'python'
         return sys.executable
 
     def load_config(self):
@@ -195,9 +191,9 @@ class ExodiaDesktop(ctk.CTk):
         buttons = {"dashboard": self.btn_dash, "agents": self.btn_agents, "graph": self.btn_graph, "playbooks": self.btn_playbooks, "settings": self.btn_settings}
         for name, btn in buttons.items():
             if name == tab_name:
-                btn.configure(fg_color="#222222")
+                btn.configure(fg_color="#332A1B")
             else:
-                btn.configure(fg_color="transparent")
+                btn.configure(fg_color="#1E1E1E")
         
         for frame in self.frames.values():
             frame.grid_forget()
@@ -211,13 +207,15 @@ class ExodiaDesktop(ctk.CTk):
         frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
         frame.grid_rowconfigure(2, weight=1)
 
-        self.header = ctk.CTkLabel(frame, text="Autonomous Defense Dashboard", font=ctk.CTkFont(size=28, weight="bold"))
+        self.header = ctk.CTkLabel(frame, text="Autonomous Defense Dashboard", text_color="#E8B87D", font=ctk.CTkFont(size=28, weight="bold"))
         self.header.grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 20))
 
-        btn_edr = ctk.CTkButton(frame, text="🛡 Arm Live EDR Sensor", fg_color="#1E90FF", hover_color="#4169E1", command=self.toggle_edr)
+        btn_kwargs = {"fg_color": "#1E1E1E", "border_color": "#D4AF37", "border_width": 1, "text_color": "#FAD990", "hover_color": "#332A1B"}
+        
+        btn_edr = ctk.CTkButton(frame, text="🛡 Arm Live EDR Sensor", command=self.toggle_edr, **btn_kwargs)
         btn_edr.grid(row=0, column=2, sticky="e", pady=(0, 20), padx=10)
 
-        btn_inject = ctk.CTkButton(frame, text="⚠ Inject Chaos Threat", fg_color="#8B0000", hover_color="#A52A2A", command=self.inject_threat)
+        btn_inject = ctk.CTkButton(frame, text="⚠ Inject Chaos Threat", command=self.inject_threat, **btn_kwargs)
         btn_inject.grid(row=0, column=3, sticky="e", pady=(0, 20))
 
         self.card1 = self.create_metric_card(frame, "Kafka Stream", "0 MB/s", 1, 0)
@@ -225,7 +223,7 @@ class ExodiaDesktop(ctk.CTk):
         self.card3 = self.create_metric_card(frame, "Processed", "0", 1, 2)
         self.card4 = self.create_metric_card(frame, "MTTR", "N/A", 1, 3)
 
-        self.console_frame = ctk.CTkFrame(frame, fg_color="#111111", corner_radius=10)
+        self.console_frame = ctk.CTkFrame(frame, fg_color="#141414", border_color="#C88E54", border_width=1, corner_radius=10)
         self.console_frame.grid(row=2, column=0, columnspan=4, sticky="nsew", pady=(20, 0))
         self.console_frame.grid_columnconfigure(0, weight=1)
         self.console_frame.grid_rowconfigure(1, weight=1)
@@ -233,13 +231,13 @@ class ExodiaDesktop(ctk.CTk):
         title_frame = ctk.CTkFrame(self.console_frame, fg_color="transparent")
         title_frame.grid(row=0, column=0, sticky="ew", padx=15, pady=(10, 0))
         
-        self.console_title = ctk.CTkLabel(title_frame, text="LIVE NEURAL STREAM", font=ctk.CTkFont(size=12, weight="bold"), text_color="#555555")
+        self.console_title = ctk.CTkLabel(title_frame, text="LIVE NEURAL STREAM", font=ctk.CTkFont(size=12, weight="bold"), text_color="#888888")
         self.console_title.pack(side="left")
         
-        btn_clear = ctk.CTkButton(title_frame, text="Clear Console", width=100, height=24, fg_color="#333333", hover_color="#444444", command=self.clear_console)
+        btn_clear = ctk.CTkButton(title_frame, text="Clear Console", width=100, height=24, command=self.clear_console, **btn_kwargs)
         btn_clear.pack(side="right")
 
-        self.console_box = ctk.CTkTextbox(self.console_frame, fg_color="#111111", text_color="#00FF41", font=ctk.CTkFont(family="Consolas", size=13))
+        self.console_box = ctk.CTkTextbox(self.console_frame, fg_color="#0A0A0A", text_color="#D4AF37", font=ctk.CTkFont(family="Consolas", size=13))
         self.console_box.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
         self.console_box.configure(state="disabled")
 
@@ -249,19 +247,21 @@ class ExodiaDesktop(ctk.CTk):
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(2, weight=1)
 
-        title = ctk.CTkLabel(frame, text="LangGraph Orchestrator", font=ctk.CTkFont(size=28, weight="bold"))
+        title = ctk.CTkLabel(frame, text="LangGraph Orchestrator", text_color="#E8B87D", font=ctk.CTkFont(size=28, weight="bold"))
         title.grid(row=0, column=0, sticky="w", pady=(0, 10))
 
         controls = ctk.CTkFrame(frame, fg_color="transparent")
         controls.grid(row=1, column=0, sticky="ew", pady=(0, 10))
         
-        self.btn_start_agents = ctk.CTkButton(controls, text="▶ Boot Swarm", fg_color="#006400", hover_color="#008000", command=self.start_agent_swarm)
+        btn_kwargs = {"fg_color": "#1E1E1E", "border_color": "#D4AF37", "border_width": 1, "text_color": "#FAD990", "hover_color": "#332A1B"}
+        
+        self.btn_start_agents = ctk.CTkButton(controls, text="▶ Boot Swarm", command=self.start_agent_swarm, **btn_kwargs)
         self.btn_start_agents.pack(side="left", padx=(0, 10))
 
-        self.btn_stop_agents = ctk.CTkButton(controls, text="■ Shutdown Swarm", fg_color="#8B0000", hover_color="#A52A2A", state="disabled", command=self.stop_agent_swarm)
+        self.btn_stop_agents = ctk.CTkButton(controls, text="■ Shutdown Swarm", state="disabled", command=self.stop_agent_swarm, **btn_kwargs)
         self.btn_stop_agents.pack(side="left")
 
-        self.agent_console = ctk.CTkTextbox(frame, fg_color="#0a0a0a", text_color="#D3D3D3", font=ctk.CTkFont(family="Consolas", size=13))
+        self.agent_console = ctk.CTkTextbox(frame, fg_color="#0A0A0A", text_color="#D4AF37", font=ctk.CTkFont(family="Consolas", size=13))
         self.agent_console.grid(row=2, column=0, sticky="nsew")
         self.agent_console.configure(state="disabled")
 
@@ -271,7 +271,7 @@ class ExodiaDesktop(ctk.CTk):
         frame.grid_rowconfigure(2, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         
-        title = ctk.CTkLabel(frame, text="Live Neural Threat Graph", font=ctk.CTkFont(size=28, weight="bold"))
+        title = ctk.CTkLabel(frame, text="Live Neural Threat Graph", text_color="#E8B87D", font=ctk.CTkFont(size=28, weight="bold"))
         title.grid(row=0, column=0, sticky="w", pady=(0, 5))
         
         desc = ctk.CTkLabel(frame, text="Interactive real-time mapping of attack vectors, APTs, and affected hosts.", font=ctk.CTkFont(size=14), text_color="#888888")
@@ -280,14 +280,16 @@ class ExodiaDesktop(ctk.CTk):
         # Controls
         controls = ctk.CTkFrame(frame, fg_color="transparent")
         controls.grid(row=0, column=1, rowspan=2, sticky="e")
-        btn_refresh = ctk.CTkButton(controls, text="Refresh Graph", command=self.refresh_graph)
+        
+        btn_kwargs = {"fg_color": "#1E1E1E", "border_color": "#D4AF37", "border_width": 1, "text_color": "#FAD990", "hover_color": "#332A1B"}
+        btn_refresh = ctk.CTkButton(controls, text="Refresh Graph", command=self.refresh_graph, **btn_kwargs)
         btn_refresh.pack(side="right", padx=5)
         
         # Matplotlib Figure
         plt.style.use("dark_background")
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
-        self.fig.patch.set_facecolor('#181818')
-        self.ax.set_facecolor('#181818')
+        self.fig.patch.set_facecolor('#0A0A0A')
+        self.ax.set_facecolor('#0A0A0A')
         
         self.canvas = FigureCanvasTkAgg(self.fig, master=frame)
         self.canvas.get_tk_widget().grid(row=2, column=0, columnspan=2, sticky="nsew")
@@ -322,27 +324,26 @@ class ExodiaDesktop(ctk.CTk):
         node_colors = []
         for node in G.nodes():
             if "Attacker" in node:
-                node_colors.append('#FF4444') # Red
+                node_colors.append('#8B0000') # Dark Red
             elif "APT" in node:
-                node_colors.append('#1E90FF') # Blue
+                node_colors.append('#C88E54') # Bronze
             elif "CVE" in node:
-                node_colors.append('#FFA500') # Orange
+                node_colors.append('#D4AF37') # Gold variant
             else:
-                node_colors.append('#00FF41') # Green
+                node_colors.append('#FAD990') # Gold
 
         # Draw Nodes
         nx.draw_networkx_nodes(G, pos, ax=self.ax, node_color=node_colors, node_size=300, alpha=0.8)
         # Draw Edges
-        nx.draw_networkx_edges(G, pos, ax=self.ax, edge_color='#555555', alpha=0.5)
+        nx.draw_networkx_edges(G, pos, ax=self.ax, edge_color='#C88E54', alpha=0.5)
         # Draw Labels
-        nx.draw_networkx_labels(G, pos, ax=self.ax, font_size=8, font_color='white', font_family='sans-serif')
+        nx.draw_networkx_labels(G, pos, ax=self.ax, font_size=8, font_color='#E8B87D', font_family='sans-serif')
         
         self.ax.margins(0.2)
         self.ax.axis("off")
         self.canvas.draw()
 
     def generate_demo_graph(self, G):
-        # 15 demo nodes
         edges = [
             ("192.168.1.5", "SQL Database"),
             ("192.168.1.5", "Web Server"),
@@ -366,7 +367,7 @@ class ExodiaDesktop(ctk.CTk):
         frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         self.frames["playbooks"] = frame
 
-        title = ctk.CTkLabel(frame, text="SOAR Playbooks", font=ctk.CTkFont(size=28, weight="bold"))
+        title = ctk.CTkLabel(frame, text="SOAR Playbooks", text_color="#E8B87D", font=ctk.CTkFont(size=28, weight="bold"))
         title.pack(anchor="w", pady=(0, 20))
         
         playbooks_config = self.config.get("playbooks", {})
@@ -386,6 +387,8 @@ class ExodiaDesktop(ctk.CTk):
             switch = ctk.CTkSwitch(
                 container, 
                 text=key, 
+                progress_color="#D4AF37",
+                button_color="#E8B87D",
                 font=ctk.CTkFont(size=14, weight="bold"),
                 command=lambda k=key, s=container: self.toggle_playbook(k, s)
             )
@@ -393,7 +396,6 @@ class ExodiaDesktop(ctk.CTk):
             if state:
                 switch.select()
                 
-            # Store the switch reference in the container for the callback to retrieve
             container.switch = switch
                 
             lbl = ctk.CTkLabel(container, text=desc, font=ctk.CTkFont(size=12), text_color="#888888")
@@ -410,10 +412,10 @@ class ExodiaDesktop(ctk.CTk):
         frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
         self.frames["settings"] = frame
 
-        title = ctk.CTkLabel(frame, text="Settings & Configuration", font=ctk.CTkFont(size=28, weight="bold"))
+        title = ctk.CTkLabel(frame, text="Settings & Configuration", text_color="#E8B87D", font=ctk.CTkFont(size=28, weight="bold"))
         title.grid(row=0, column=0, sticky="w", pady=(0, 20), columnspan=2)
 
-        self.demo_toggle = ctk.CTkSwitch(frame, text="Enable Demo Mode (Simulate Telemetry Stream)", command=self.toggle_demo)
+        self.demo_toggle = ctk.CTkSwitch(frame, text="Enable Demo Mode (Simulate Telemetry Stream)", progress_color="#D4AF37", button_color="#E8B87D", command=self.toggle_demo)
         self.demo_toggle.grid(row=1, column=0, sticky="w", pady=10, columnspan=2)
         if self.config.get("demo_mode", True):
             self.demo_toggle.select()
@@ -431,7 +433,7 @@ class ExodiaDesktop(ctk.CTk):
         self.setting_entries = {}
         row = 2
         for label_text, config_key, placeholder in fields:
-            lbl = ctk.CTkLabel(frame, text=label_text)
+            lbl = ctk.CTkLabel(frame, text=label_text, text_color="#E8B87D")
             lbl.grid(row=row, column=0, sticky="w", pady=(15, 5))
             
             entry = ctk.CTkEntry(frame, width=400, placeholder_text=placeholder)
@@ -446,7 +448,8 @@ class ExodiaDesktop(ctk.CTk):
             self.setting_entries[config_key] = entry
             row += 2
 
-        btn_save = ctk.CTkButton(frame, text="Save Configuration", command=self.save_settings)
+        btn_kwargs = {"fg_color": "#1E1E1E", "border_color": "#D4AF37", "border_width": 1, "text_color": "#FAD990", "hover_color": "#332A1B"}
+        btn_save = ctk.CTkButton(frame, text="Save Configuration", command=self.save_settings, **btn_kwargs)
         btn_save.grid(row=row, column=0, sticky="w", pady=(30, 0))
         
         self.lbl_save_status = ctk.CTkLabel(frame, text="", text_color="#00FF41")
@@ -464,11 +467,11 @@ class ExodiaDesktop(ctk.CTk):
     # ─── LOGIC ───
 
     def create_metric_card(self, parent, title, val, row, col):
-        frame = ctk.CTkFrame(parent, fg_color="#222222", corner_radius=15)
+        frame = ctk.CTkFrame(parent, fg_color="#141414", border_color="#C88E54", border_width=1, corner_radius=15)
         frame.grid(row=row, column=col, sticky="nsew", padx=5, pady=5)
-        lbl_title = ctk.CTkLabel(frame, text=title.upper(), font=ctk.CTkFont(size=11, weight="bold"), text_color="#777777")
+        lbl_title = ctk.CTkLabel(frame, text=title.upper(), font=ctk.CTkFont(size=11, weight="bold"), text_color="#888888")
         lbl_title.pack(anchor="w", padx=15, pady=(15, 0))
-        lbl_val = ctk.CTkLabel(frame, text=val, font=ctk.CTkFont(size=28, weight="bold"))
+        lbl_val = ctk.CTkLabel(frame, text=val, text_color="#E8B87D", font=ctk.CTkFont(size=28, weight="bold"))
         lbl_val.pack(anchor="w", padx=15, pady=(0, 15))
         return lbl_val
         
@@ -564,7 +567,7 @@ class ExodiaDesktop(ctk.CTk):
                 resp = requests.get(f"{gateway_url}/api/v1/metrics", timeout=2)
                 if resp.status_code == 200:
                     data = resp.json()
-                    self.after(0, self.status_gateway.configure, {"text": "● Gateway Online", "text_color": "#00FF41"})
+                    self.after(0, self.status_gateway.configure, {"text": "● Gateway Online", "text_color": "#D4AF37"})
                     self.after(0, self.card1.configure, {"text": f"{data.get('kafka_ingest_rate_mb', 0)} MB/s"})
                     self.after(0, self.card2.configure, {"text": f"{data.get('ai_confidence_score', 0)}%"})
                     self.after(0, self.card3.configure, {"text": f"{data.get('threats_processed', 0):,}"})
@@ -575,9 +578,9 @@ class ExodiaDesktop(ctk.CTk):
                 
             # Simulate basic checks for Kafka, Ollama, Redis
             # In a full implementation, these would make real API checks
-            self.after(0, self.status_kafka.configure, {"text": "● Kafka Online", "text_color": "#00FF41"})
-            self.after(0, self.status_ollama.configure, {"text": "● Ollama Online", "text_color": "#00FF41"})
-            self.after(0, self.status_redis.configure, {"text": "● Redis Online", "text_color": "#00FF41"})
+            self.after(0, self.status_kafka.configure, {"text": "● Kafka Online", "text_color": "#D4AF37"})
+            self.after(0, self.status_ollama.configure, {"text": "● Ollama Online", "text_color": "#D4AF37"})
+            self.after(0, self.status_redis.configure, {"text": "● Redis Online", "text_color": "#D4AF37"})
             
             time.sleep(2)
 
@@ -599,12 +602,12 @@ class ExodiaDesktop(ctk.CTk):
             self.edr_process.terminate()
             self.edr_process = None
             self.log_console(">> LIVE EDR SENSOR DISARMED.")
-            self.console_title.configure(text_color="#555555")
+            self.console_title.configure(text_color="#888888")
         else:
             self.log_console(">> ARMING LIVE EDR NETWORK SENSOR...")
             self.demo_mode = False
             self.demo_toggle.deselect()
-            self.console_title.configure(text_color="#00FF41")
+            self.console_title.configure(text_color="#D4AF37")
             
             script_path = os.path.join(get_project_root(), "ai_engine", "edr_sensor.py")
             if os.path.exists(script_path):
